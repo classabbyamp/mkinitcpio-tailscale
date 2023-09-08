@@ -1,0 +1,23 @@
+#!/usr/bin/ash
+
+run_hook() {
+	echo "Starting tailscale"
+
+	modprobe tun
+	while ! [ -e /dev/net/tun ]; do
+		sleep 1
+	done
+
+	(
+		[ -r /etc/tailscale/tailscaled.conf ] && . /etc/tailscale/tailscaled.conf
+		tailscaled -state "mem:" -port "${tailscale_port:-41641}" $tailscaled_args &
+		tailscale up --authkey="${tailscale_authkey:-file:/etc/tailscale/auth_key}" $tailscale_args
+	)
+}
+
+run_cleanuphook() {
+	tailscale logout
+	killall tailscaled
+}
+
+# vim: ft=sh noexpandtab
