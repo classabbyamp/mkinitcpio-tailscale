@@ -1,0 +1,73 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+    echo 'usage: mkinitcpio-tailscale-setup -H [HOSTNAME] -k [AUTHKEY PATH] -d "[TAILSCALED ARGS]" -t "[TAILSCALE UP ARGS]"' >&2
+}
+
+die() {
+    if [ -n "$TAILSCALED_PID" ]; then
+        kill "$TAILSCALED_PID"
+        echo "mkinitcpio-tailscale-setup: tailscale daemon killed" >&2
+    fi
+    exit 0
+}
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "mkinitcpio-tailscale-setup: must run as root" >&2
+    exit 1
+fi
+
+if ! type pgrep >/dev/null; then
+    echo "mkinitcpio-tailscale-setup: missing pgrep" >&2
+    exit 1
+fi
+
+if pgrep -x tailscaled >/dev/null; then
+    echo "mkinitcpio-tailscale-setup: tailscaled is already running, please disable before continuing" >&2
+    exit 1
+fi
+
+while getopts H:k:d:t:h flag; do
+    case "$flag" in
+        H) HOSTNAME="$OPTARG" ;;
+        k) AUTHKEY="$OPTARG" ;;
+        d) TAILSCALED_ARGS="$OPTARG" ;;
+        t) TAILSCALE_UP_ARGS="$OPTARG" ;;
+        ?) usage; exit 0 ;;
+    esac
+done
+
+shift $(( OPTIND - 1 ))
+
+if [ -z "$AUTHKEY" ]; then
+    echo "mkinitcpio-tailscale-setup: missing authkey" >&2
+    usage
+    exit 1
+fi
+
+if [ ! -f "$AUTHKEY" ] || [ ! -r "$AUTHKEY" ]; then
+    echo "mkinitcpio-tailscale-setup: could not open '$AUTHKEY'" >&2
+fi
+
+if [ -z "$HOSTNAME" ]; then
+    if [ -r "/etc/hostname" ]; then
+        HOSTNAME="$(head -1 /etc/hostname)-mkinitcpio"
+    else
+        HOSTNAME="mkinitcpio"
+    fi
+fi
+
+trap die EXIT INT TERM
+
+mkdir -p /etc/tailscale
+
+# shellcheck disable=SC2086
+tailscaled -state "/etc/tailscale/tailscaled.state" $TAILSCALED_ARGS >/tmp/mkinitcpio-tailscale-setup-tailscaled.log 2>&1 &
+TAILSCALED_PID="$!"
+# shellcheck disable=SC2086
+tailscale up --authkey="file:$AUTHKEY" --hostname="$HOSTNAME" $TAILSCALE_UP_ARGS >/tmp/mkinitcpio-tailscale-setup-tailscale.log 2>&1
+
+echo "mkinitcpio-tailscale-setup: success" >&2
+die
