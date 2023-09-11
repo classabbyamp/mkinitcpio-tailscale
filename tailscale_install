@@ -1,6 +1,12 @@
 #!/bin/bash
 
 build() {
+	# are we even needed?
+	if [ ! -r "/etc/tailscale/tailscaled.state" ] || [ ! -s "/etc/tailscale/tailscaled.state" ]; then
+		echo "mkinitcpio-tailscale has not been set up; run mkinitcpio-tailscale-setup first; abort"
+		return 0
+	fi
+
 	# tailscale needs iptables
 	add_binary iptables
 	add_binary ip6tables
