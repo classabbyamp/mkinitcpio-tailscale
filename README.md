@@ -20,7 +20,7 @@ Instead, to ensure that if the Tailscale credentials are stolen, no Tailnet acce
 
 The following example ACL configuration allows `local` machines to connect to anything, and `server` machine to connect to any other `server`. By tagging every other machine on the Tailnet with `local` or `server`, tagging mkinitcpio-tailscale machines as `mkinitcpio`, and omitting any ACL for `tag:mkinitcpio`, any machine with the `mkinitcpio` tag will not be able to initiate a connection to any other machine.
 
-```hjson
+```jsonc
 // Example ACLs for mkinitcpio-tailscale
 {
 	"tagOwners": {
@@ -41,7 +41,7 @@ With this setup, while it is possible for an attacker to obtain the node key and
 ## Setup
 
 1. [Set up ACLs](https://tailscale.com/kb/1018/acls/).
-2. Generate an [auth key](https://login.tailscale.com/admin/settings/keys) and save it to a file like `/tmp/mk-ts-authkey`. Recommended settings: NOT reusable, NOT ephemeral, and tagged with the `mkinitcpio` tag or similar.
+2. Generate an [auth key](https://login.tailscale.com/admin/settings/keys) and save it to a file like `/tmp/mk-ts-authkey`. Recommended settings: NOT reusable, NOT ephemeral, 1 day expiration, and tagged with the `mkinitcpio` tag or similar.
 3. Run the included `mkinitcpio-tailscale-setup` script. This will generate the necessary `tailscaled.state` file in `/etc/tailscale`.
 4. Add `tailscale` to `HOOKS` in `/etc/mkinitcpio.conf`, after any network setup hooks.
 5. Regenerate the initramfs.
