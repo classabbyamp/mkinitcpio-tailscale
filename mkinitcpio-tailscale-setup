@@ -3,7 +3,16 @@
 set -e
 
 usage() {
-    echo 'usage: mkinitcpio-tailscale-setup -H [HOSTNAME] -k [AUTHKEY PATH] -d "[TAILSCALED ARGS]" -t "[TAILSCALE UP ARGS]"' >&2
+    cat >&2 <<EOF
+usage: mkinitcpio-tailscale-setup [-f] -H [HOSTNAME] -k [AUTHKEY PATH] -d "[TAILSCALED ARGS]" -t "[TAILSCALE UP ARGS]"
+
+-f		Force reauthentication
+-H		Override hostname (default: '\$(cat /etc/hostname)-mkinitcpio')
+-k		Path to file containing authkey
+-d		Extra arguments to pass to 'tailscaled'
+-t		Extra arguments to pass to 'tailscale up'
+EOF
+
 }
 
 die() {
@@ -29,8 +38,9 @@ if pgrep -x tailscaled >/dev/null; then
     exit 1
 fi
 
-while getopts H:k:d:t:h flag; do
+while getopts fH:k:d:t:h flag; do
     case "$flag" in
+        f) FORCE_REAUTH="--force-reauth" ;;
         H) HOSTNAME="$OPTARG" ;;
         k) AUTHKEY="$OPTARG" ;;
         d) TAILSCALED_ARGS="$OPTARG" ;;
@@ -63,10 +73,14 @@ trap die EXIT INT TERM
 
 mkdir -p /etc/tailscale
 
+if [ -n "$FORCE_REAUTH" ]; then
+    rm -f /etc/tailscale/tailscaled.state
+fi
+
 # shellcheck disable=SC2086
 tailscaled -state "/etc/tailscale/tailscaled.state" $TAILSCALED_ARGS >/tmp/mkinitcpio-tailscale-setup-tailscaled.log 2>&1 &
 TAILSCALED_PID="$!"
 # shellcheck disable=SC2086
-tailscale up --authkey="file:$AUTHKEY" --hostname="$HOSTNAME" $TAILSCALE_UP_ARGS >/tmp/mkinitcpio-tailscale-setup-tailscale.log 2>&1
+tailscale up --authkey="file:$AUTHKEY" --hostname="$HOSTNAME" $FORCE_REAUTH $TAILSCALE_UP_ARGS >/tmp/mkinitcpio-tailscale-setup-tailscale.log 2>&1
 
 echo "mkinitcpio-tailscale-setup: success" >&2

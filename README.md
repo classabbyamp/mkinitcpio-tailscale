@@ -36,7 +36,7 @@ The following example ACL configuration allows `local` machines to connect to an
 }
 ```
 
-With this setup, while it is possible for an attacker to obtain the node key and other Tailscale state information from the initramfs, they would not be able to connect to any other machine in the Tailnet.
+With this setup, while it is possible for an attacker to obtain the node key and other Tailscale state information from the initramfs, they would not be able to connect to any other machine in the Tailnet. If this information is compromised, the machine can be removed from the Tailnet and re-added once secure again.
 
 ## Setup
 
