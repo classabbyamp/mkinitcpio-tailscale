@@ -47,3 +47,5 @@ With this setup, while it is possible for an attacker to obtain the node key and
 3. Run the included `mkinitcpio-tailscale-setup` script. This will generate the necessary `tailscaled.state` file in `/etc/tailscale`.
 4. Add `tailscale` to `HOOKS` in `/etc/mkinitcpio.conf`, after any network setup hooks.
 5. Regenerate the initramfs.
+
+For an example of setting up this hook to access [ZFSBootMenu](https://zfsbootmenu.org) remotely, see my post about it [here](https://placeviolette.net/blog/zfsbootmenu-tailscale/).
