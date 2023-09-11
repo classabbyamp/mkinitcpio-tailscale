@@ -70,4 +70,3 @@ TAILSCALED_PID="$!"
 tailscale up --authkey="file:$AUTHKEY" --hostname="$HOSTNAME" $TAILSCALE_UP_ARGS >/tmp/mkinitcpio-tailscale-setup-tailscale.log 2>&1
 
 echo "mkinitcpio-tailscale-setup: success" >&2
-die
