@@ -17,7 +17,8 @@ build() {
 
 	add_binary tailscaled
 	add_binary tailscale
-	add_full_dir /etc/tailscale
+	add_file /etc/tailscale/tailscaled.state
+	[ -r "/etc/tailscale/tailscaled.conf" ] && add_file /etc/tailscale/tailscaled.conf
 	add_module tun
 
 	add_runscript
