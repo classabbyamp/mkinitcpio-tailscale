@@ -9,6 +9,7 @@ sourced as a busybox ash shell script.
 
     tailscale_port:    argument to -port (default: 41641)
     tailscaled_args:   other args to pass to tailscaled
+    tailscale_timeout: argument to --timeout (default: 20s)
     tailscale_args:    other args to pass to tailscale up
 
 > Note: This project is not affiliated with Tailscale in any way

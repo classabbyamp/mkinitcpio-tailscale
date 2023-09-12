@@ -11,7 +11,7 @@ run_hook() {
 	(
 		[ -r /etc/tailscale/tailscaled.conf ] && . /etc/tailscale/tailscaled.conf
 		tailscaled -state "/etc/tailscale/tailscaled.state" -port "${tailscale_port:-41641}" $tailscaled_args &
-		tailscale up $tailscale_args
+		tailscale up --timeout="${tailscale_timeout:-20s}" $tailscale_args
 	)
 }
 
