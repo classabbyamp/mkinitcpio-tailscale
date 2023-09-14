@@ -30,8 +30,9 @@ help() {
 	network to allow for remote unlocking of disks and similar
 	functionality. This hook requires that networking be set up using
 	another mkinitcpio module, like 'net' from mkinitcpio-nfs-utils.
-	An SSH server also must come from another mkinitcpio module, like
-	'dropbear' from mkinitcpio-dropbear.
+	An SSH server can come from another mkinitcpio module, like
+	'dropbear' from mkinitcpio-dropbear, or the built-in Tailscale SSH
+	server.
 
 	Configuration can be done in /etc/tailscale/tailscaled.conf, which is
 	sourced as a busybox ash shell script.

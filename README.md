@@ -2,7 +2,7 @@
 
 [![repology package list](https://repology.org/badge/vertical-allrepos/mkinitcpio-tailscale.svg)](https://repology.org/project/mkinitcpio-tailscale/versions)
 
-This hook connects the early userspace environment to a Tailscale network to allow for remote unlocking of disks and similar functionality. This hook requires that networking be set up using another mkinitcpio module, like `net` from [`mkinitcpio-nfs-utils`](https://gitlab.archlinux.org/archlinux/packaging/packages/mkinitcpio-nfs-utils). An SSH server also must come from another mkinitcpio module, like `dropbear` from [`mkinitcpio-dropbear`](https://github.com/ahesford/mkinitcpio-dropbear).
+This hook connects the early userspace environment to a Tailscale network to allow for remote unlocking of disks and similar functionality. This hook requires that networking be set up using another mkinitcpio module, like `net` from [`mkinitcpio-nfs-utils`](https://gitlab.archlinux.org/archlinux/packaging/packages/mkinitcpio-nfs-utils). An SSH server can come from another mkinitcpio module, like `dropbear` from [`mkinitcpio-dropbear`](https://github.com/ahesford/mkinitcpio-dropbear), or the [built-in Tailscale SSH server](https://tailscale.com/kb/1193/tailscale-ssh/).
 
 Configuration can be done in `/etc/tailscale/tailscaled.conf`, which is
 sourced as a busybox ash shell script.
